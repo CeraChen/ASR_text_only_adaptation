@@ -1,0 +1,62 @@
+batch_type: numel
+batch_bins: 3740625 #4987500 #6650000
+accum_grad: 1
+max_epoch: 51
+patience: none
+
+best_model_criterion:
+-   - valid
+    - loss
+    - min
+-   - valid
+    - cer_ctc
+    - min
+keep_nbest_models: 5 
+
+#init_param: /mnt/lustre/sjtu/home/cc110/baseline/espnet-master/egs2/wsj/asr1/exp/asr_conformer_1_interctc_sp_raw_en_char_sp/valid.ctc_cer.ave.pth.adpater
+init_param: /mnt/lustre/sjtu/home/cc110/baseline/espnet-master/egs2/wsj/asr1/exp/asr_adapter_2_raw_en_char_sp/2epoch.pth
+
+
+encoder: conformer
+encoder_conf:
+    output_size: 512
+    attention_heads: 8
+    linear_units: 2048
+    num_blocks: 18
+    dropout_rate: 0.1
+    positional_dropout_rate: 0.1
+    attention_dropout_rate: 0.1
+    input_layer: conv2d
+    normalize_before: true
+    interctc_layer_idx: [6,12]
+    interctc_use_conditioning: true
+
+
+use_adapter: true
+training_step: 2
+adapter: conformer
+adapter_conf:
+    input_size: 1
+    output_size: 512
+    attention_heads: 8
+    linear_units: 2048
+    num_blocks: 6
+    dropout_rate: 0.1
+    attention_dropout_rate: 0.1
+    normalize_before: true
+
+
+model_conf:
+    #use_adapter: true
+    #training_step: 2
+    ctc_weight: 1.0
+    interctc_weight: 0.5
+    lsm_weight: 0.1
+    length_normalized_loss: false
+
+optim: adam
+optim_conf:
+    lr: 0.0013
+scheduler: warmuplr
+scheduler_conf:
+    warmup_steps: 40000
